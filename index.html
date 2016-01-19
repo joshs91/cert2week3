@@ -1,12 +1,22 @@
 <!doctype html>
 
 <html>
-  <body>
-    <canvas id="gameCanvas" width="640" height="480">
-          This text is displayed if your browser does not support HTML5.
-    </canvas>
-	<script src="keyboard.js"></script>
-	<script src="player.js"></script>
-    <script src="main.js"></script>
-  </body>
+	<head>
+		<title>Good Game</title>
+		<style type="text/css">
+		#game {
+			border: solid thin black;
+		}
+		</style>
+	</head>
+	  <body onload="setup()">
+	    <canvas id="gameCanvas" width="1280" height="720">
+	          This text is displayed if your browser does not support HTML5.
+	    </canvas>
+	    <script src="howler.js"></script>
+		<script src="keyboard.js"></script>
+		<script src="map.js"></script>
+		<script src="player.js"></script>
+	    <script src="main.js"></script>
+	  </body>
 </html>
