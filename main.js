@@ -1,9 +1,27 @@
 var canvas, context;
 var w, h;
-//W: 87
-//A: 65
-//S: 83
-//D: 68
+
+var STATE_SPLASH = 0;
+var STATE_GAME = 1;
+var STATE_FIGHT = 2;
+var STATE_GAMEWIN = 3;
+
+var gameState = STATE_GAME;
+
+var fight_background= new Image();
+fight_background.src = "imgs/Fight.png";
+
+var time = 0;
+time = time + 1;
+	if(time == 1600){
+		time = 0
+	}
+
+function clamp(value, min, max){
+    if(value < min) return min;
+    else if(value > max) return max;
+    return value;
+}
 
 var background_sound = new Howl(
 {
@@ -104,18 +122,73 @@ function setup() {
 	//Turn off image smoothing
 	context.imageSmoothingEnabled = false;
 
+	SetupMap();
 	draw();
 }
 
-function draw() {
-	//context.fillRect(100, 100, 200, 200);
-	context.clearRect(0, 0, w, h)
 
-	context.save();
-		context.scale(5.0, 5.0);
-		DrawMap();
-		Player.draw();
+	
+
+function runGame()
+{
+
+	context.setTransform(1,0,0,1,0,0);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+                                         
+    var camX = (-Player.posX * (25/5)) + w/2.5;
+    var camY = (-Player.posY * (25/5)) + h/2.5;
+
+    context.save();
+	context.translate( camX, camY );    
+	context.scale(5.0, 5.0);
+	DrawMap();
+	bird.draw();
+	e2.draw();
+	e3.draw();
+	e1.draw();
+	Player.draw();
 	context.restore();
-
 	requestAnimationFrame(draw);
+	
+}
+
+function runfight ()
+{
+
+
+
+context.fillStyle = "#ccc";		
+context.fillRect(0, 0, canvas.width, canvas.height);
+context.drawImage(fight_background, 0, 0, canvas.width, canvas.height)
+
+context.fillStyle = "#000";
+context.font = "40px Arial";
+context.fillText(Player.health + "/" + Player.healthM , 1080, 470);
+
+context.fillStyle = "#000";
+context.font = "40px Arial";
+context.fillText("Lv"+Player.Player_level, 1130, 380);
+
+context.fillStyle = "#000";
+context.font = "40px Arial";
+context.fillText("Lv"+Player.Player_level, 480, 120);
+
+
+
+
+}
+
+function draw() {
+	switch(gameState)
+	{
+		case STATE_SPLASH:
+			runSplash();
+			break;
+		case STATE_GAME:
+			runGame();
+			break;
+		case STATE_FIGHT:
+			runfight();
+			break;
+	}	
 }

@@ -15,8 +15,12 @@ var pImg_D = new Image();
 pImg_D.src = "imgs/down.png";
 
 var Player = {
-	posX: 0,
-	posY: 0,
+	posX: 115,
+	posY: 45,
+	health: 7,
+	healthM: 7,
+	Player_Name:"",
+	Player_level: 1,
 	moving: false,
 	facing: "down",		//"down", "left", "right", "up"
 	draw: function() {
@@ -38,4 +42,10 @@ var Player = {
 			context.drawImage(pImg_R, this.posX, this.posY);
 		}
 	}
+}
+
+var Moves = 
+{
+slash: 2,
+pound: 4,
 }
