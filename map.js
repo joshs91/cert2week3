@@ -34,15 +34,17 @@ var mapTiles =
 */
 
 var mapTiles;
+var mapWidth = 100;
+var mapHeight = 100;
 
 function SetupMap()
 {
-	mapTiles = new Array (1000);
+	mapTiles = new Array (mapHeight);
 
 	for(var x = 0; x < mapTiles.length; x++) 
 	{
 
-		mapTiles[x] = new Array(100);
+		mapTiles[x] = new Array (mapWidth);
 
 		for(var y = 0; y < mapTiles[0].length; y++)
 		{	
@@ -69,6 +71,11 @@ function SetupMap()
 			{
 				mapTiles[x][y] = 4;
 			}
+			var xTile = y;
+			var yTile = x;
+			if(xTile > 24 && xTile < 29 && yTile > 5 && yTile < 9) {
+				mapTiles[x][y] = 80;
+			}
 		}
 	}	
 	mapTiles[2][1] =1;
@@ -82,11 +89,11 @@ function DrawMap () {
 			{
 				context.drawImage(grass1 ,x * 16, y * 16);
 			}
-			else if(tile ==1)
+			else if(tile == 1)
 			{
 				context.drawImage(flower1 ,x * 16, y * 16);
 			}
-			else if(tile ==2)
+			else if(tile == 2)
 			{
 				context.drawImage(flower2 ,x * 16, y * 16);
 			}
@@ -102,7 +109,12 @@ function DrawMap () {
 				context.drawImage(grass3 ,x * 16, y * 16);
 			}	
 
-			else if(tile ==3)
+			else if(tile == 3)
+				{
+					context.drawImage(grass2 ,x * 16, y * 16);
+				}
+			
+			else if(tile == 80)
 				{
 					context.drawImage(grass2 ,x * 16, y * 16);
 				}

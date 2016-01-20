@@ -56,4 +56,38 @@ var e2 = {
 
 }
 
+var e4 = {
+	x: 500,
+	y: 500,
+	width: 16,
+	height: 32,
+	facing: "down",
+	
+	draw: function(){
+
+		if(time % 200 == 0){
+			this.facing = "down"
+		}
+		else if(time % 100 == 0){
+			this.facing = "up"
+		}
+
+		if(time % 200 == 0){
+			this.y += 32
+			this.facing = "down"
+		}
+		else if(time % 100 == 0){
+			this.y -= 32
+			this.facing = "up"
+		}
+		if(this.facing =="up"){
+			context.drawImage(e2Img_U, this.x, this.y);
+		}
+		if(this.facing =="down"){
+			context.drawImage(e2Img_D, this.x, this.y);
+		}
+
+	}
+
+}
 //add a time var
