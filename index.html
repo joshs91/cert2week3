@@ -1,18 +1,37 @@
 <!doctype html>
 
 <html>
-	<head>
+		<head>
 		<title>Good Game</title>
 		<style type="text/css">
 		#game {
 			border: solid thin black;
 		}
+
+		#container {
+			text-align: center;
+		}
+
+		h1 {
+			font-family: "Ariel";
+			font-size: 3vw;
+		}
 		</style>
 	</head>
+
+		<body background="imgs/Menu.png">
+
 	  <body onload="setup()">
+
+	  <div id="container">
+	  	<h1>Pokemon Uranium</h1>
+	  	<a href="about.html">About!</a><br>
 	    <canvas id="gameCanvas" width="1280" height="720">
 	          This text is displayed if your browser does not support HTML5.
 	    </canvas>
+	  </div>
+	 
+
 	    <script src="howler.js"></script>
 		<script src="keyboard.js"></script>
 		<script src="map.js"></script>
@@ -21,9 +40,9 @@
 		<script src="enemy2.js"></script>
 		<script src="enemy3.js"></script>
 		<script src="player.js"></script>
-		<script src="Attack.js"></script>
 		<script src="NPC.js"></script>
 		<script src="boss.js"></script>
 	    <script src="main.js"></script>
+	  </body>
 	  </body>
 </html>

@@ -3,16 +3,21 @@ var npcs = [];
 
 function GenerateNPC(name, texNames, fightPic, x, y, health){
 	return{
-		x:0,
-		y:0,
+		id: npcs.length,
+		x: x,
+		y: y,
 		width: 16,
 		height: 16,
 		name: name,
 		health: health,
+		healthM: health,
 		isAggro: true,
+		Level: 1,
 		facing: "down",
 		textures: [],
 		fightPic: null,
+		stamina:5,
+		staminaM:5,
 		changeSpeed: Math.round(Math.random() * 100 + 100),
 		setup: function () {
 			for(var t = 0; t < texNames.length; t++) {
@@ -40,6 +45,10 @@ function GenerateNPC(name, texNames, fightPic, x, y, health){
    			Player.height + Player.posY > this.y) {
 				console.log("Hit");
 				Player.engageAttack = true;
+				for(var i = 0; i < npcs.length; i++) {
+					if(npcs[i].name == this.name)
+						currentEnemy = i;
+				}
    			}
 
 
@@ -50,12 +59,12 @@ function GenerateNPC(name, texNames, fightPic, x, y, health){
 					this.facing = "down"
 					this.y += 16;
 				} else if(rand < 0.5) {
-					if(this.y > 0) {
+					if(this.y > 2/*HERE*/) {
 						this.facing = "up"
 						this.y -= 16;
 					}
 				} else if(rand < 0.75) {
-					if(this.x > 0) {
+					if(this.x > 2/*AND HERE*/) {
 						this.facing = "left"
 						this.x -= 16;
 					}
@@ -86,7 +95,11 @@ function GenerateNPC(name, texNames, fightPic, x, y, health){
 			context.drawImage(img, this.x, this.y);
 		},
 		fightDraw: function () {
-
+			context.save();
+				context.translate(950, 100);
+				context.scale(6, 6);
+				context.drawImage(this.fightPic, 0 ,0);
+			context.restore();
 		},
 	}
 }

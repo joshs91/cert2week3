@@ -9,7 +9,10 @@ var STATE_GAMELOSE = 4;
 
 var gameState = STATE_GAME;
 
-var Enemy = makeEnemy();
+
+var currentEnemy = 0;
+
+var deathTimer = 0;
 
 var fight_background= new Image();
 fight_background.src = "imgs/Fight.png";
@@ -51,6 +54,8 @@ var fight_background_sound = new Howl(
 	volume: 0.5
 });
 
+
+
 var victory_sound = new Howl(
 {
 	urls: ["sounds/victory.wav"],
@@ -58,7 +63,9 @@ var victory_sound = new Howl(
 	buffer: true,
 	volume: 0.5
 });
-//victory_sound.play();
+if (gameState == STATE_GAMEWIN) {
+	victory_sound.play();
+}
 
 var defeat_sound = new Howl(
 {
@@ -67,7 +74,9 @@ var defeat_sound = new Howl(
 	buffer: true,
 	volume: 0.5
 });
-//defeat_sound.play();
+if (gameState == STATE_GAMELOSE) {
+	defeat_sound.play();
+}
 
 var damage_sound = new Howl(
 {
@@ -110,8 +119,11 @@ window.onkeydown = function(e) {
 	}
 }
 
+
+
 function GameInput(keyCode) 
 {
+	
 	if (gameState == STATE_GAME)
 console.log();
 
@@ -159,6 +171,32 @@ console.log();
 
 function FightInput (keyCode)
 {
+	var Enemy = npcs[currentEnemy];
+	
+if (Player.isturn == true && Player.health > 0)
+			if (keyCode == 65)
+	{
+
+		{
+			console.log("staminaregen")
+			Player.stamina =+ 4;
+			Player.isturn = false;
+
+		}
+	}
+
+
+if (Player.isturn == true && Player.health > 0)
+		if (keyCode == 68)
+	{
+
+		{
+			console.log("Healthregen")
+			Player.health += 4;
+			Player.isturn = false;
+
+		}
+	}
 
 	if (Player.isturn == true && Player.health > 0)
 		{
@@ -168,8 +206,10 @@ function FightInput (keyCode)
 				
 					console.log("slash");
 					Player.isturn = false;
-				Enemy.health -= Move.slash;
-				return;
+					Enemy.health -= Move.slash;
+				Player.stamina -= 1;
+				
+				return 1;
 				}
 		
 			else if (keyCode == 83) 
@@ -177,34 +217,80 @@ function FightInput (keyCode)
 					console.log("pound")
 					Player.isturn = false;
 					Enemy.health -= Move.pound;
-					return;
+					Player.stamina -= 5;
+					
+					return 1;
 				}
+				return 1;
 				
-		} else if (Player.isturn == false && Enemy.health > 0)
+
+				if (npcs[currentEnemy].stamina <= 0 && Player.isturn == true);
+					{
+						Player.isturn = true;
+						npcs[currentEnemy].stamina +=2;
+					}
+
+
+		} else if (Player.isturn == false && Enemy.health > 0 && npcs[currentEnemy].stamina >= 1)
 			{
 				console.log("Enemies  turn")
 				var choice = Math.random();
 				if (choice >= 0.5)
 					{
-							console.log(" Enemy slash");
+						console.log(" Enemy slash");
 						Player.health -= EnemyMove.slash;
-
+						Player.stamina += 1;
+						npcs[currentEnemy].stamina -=1;
+						damage_sound.play();
 					}else
-					 { Player.health -= EnemyMove.pound
+					 {
+					 	damage_sound.play();
+					 	Player.health -= EnemyMove.pound
 					 	console.log("Enemy pound")
+					 	Player.stamina +=1
+					 	npcs[currentEnemy].stamina -=5;
+
 					 } 
 
-					Player.isturn = true;
-						return;
+					
 
-			} else if(Player.health <= 0) {
-				gameState = STATE_GAME;
+					Player.isturn = true;
+						return 1;
+
+			} else if(npcs[currentEnemy].stamina <= 1){
+				npcs[currentEnemy].stamina += 3;
+				Player.isturn = true;
+				return 1;
+			}
+
+			else if(Player.health <= 0) {
+				gameState = STATE_GAMELOSE;
 				Player.moving = true;
-			}if(Enemy.health <= 0) {
-				gameState = STATE_GAME;
+				Player.engageAttack = false;
+				fight_background_sound.stop();
+				return 0;
+			}else if(Enemy.health <= 0) {
 				Player.moving = true;
 				Enemy.Enemyisangry = false;
+				if(Enemy.name == "BOSS"){
+					boss.alive = false;
+					gameState = STATE_GAMEWIN;
+					fight_background_sound.stop();
+					victory_sound.play();
+					return 0;
+				}else{
+					npcs.splice(currentEnemy, 1)
+					Player.engageAttack = false;
+					gameState = STATE_GAME;
+					Player.stamina = 5
+					Player.health = 7;
+					Enemy.health = 7;
+					background_sound.play();
+					fight_background_sound.stop();
+				}
+				return 0;
 			}
+			return 0;
 }
 
 var resLoc = "imgs/";
@@ -219,10 +305,25 @@ function setup() {
 	//Turn off image smoothing
 	context.imageSmoothingEnabled = false;
 
-	var bird = GenerateNPC("Bird King", ["Unt", "bird_L", "bird_R", "bird_U"], "bBot", 0, 0, 10)
+	var bird = GenerateNPC("Bird King", ["Unt", "bird_L", "bird_R", "bird_U"], "Unt", Math.random() * 300 + 130, Math.random() * 200 + 32, 10)//THIS AS WELL
 	bird.setup();
 	npcs.push(bird);
 
+	var e1 = GenerateNPC("Skelton", ["e1Img_D", "e1Img_L", "e1Img_R", "e1Img_U"], "e1Img_D", Math.random() * 300 + 130, Math.random() * 200 + 32, 10)
+	e1.setup();
+	npcs.push(e1);
+
+	var e2 = GenerateNPC("Cat", ["e2Img_D", "e2Img_L", "e2Img_R", "e2Img_U"], "e2Img_D", Math.random() * 300 + 130, Math.random() * 200 + 32, 10)
+	e2.setup();
+	npcs.push(e2);
+
+	var e3 = GenerateNPC("Eyepatch", ["e3Img_D", "e3Img_L", "e3Img_R", "e3Img_U"], "e3Img_D", Math.random() * 300 + 130, Math.random() * 200 + 32, 10)
+	e3.setup();
+	npcs.push(e3)	
+	
+	npcs.push(boss);
+
+	
 	SetupMap();
 	draw();
 }
@@ -241,7 +342,7 @@ function runGame()
     var camY = (-Player.posY * scale) + h/2.5;
 
     context.save();
-	context.translate(Math.min(camX,0), Math.min(camY, 0) );    
+	context.translate(Math.min(camX,0), Math.min(camY, -48/*THIS*/) );    
 	context.scale(scale, scale);
 	DrawMap();
 
@@ -251,17 +352,52 @@ function runGame()
 		tempNpc.gameDraw();
 	}
 
-	context.drawImage(bBot, 25*16, 6*16);
-	boss.draw();
+	context.drawImage(bBot, 32, 7*16);//THIS
+	//boss.draw();
 	Player.draw();
-	context.drawImage(bTop, 25*16, 16);
+	context.drawImage(bTop, 32, 32);//THIS
 	context.restore();
 }
 
+
+function runGamewin()
+{
+ 
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+	boss.alive = false;
+	boss.x = 40;
+	boss.y = 0;
+	context.save();
+		context.scale(5,5)
+		boss.gameUpdate();
+	context.restore();
+	context.fillStyle = "White";
+	context.font = "Arial 800px";
+	context.fillText("WIN", w/2, 300);
+	
+	
+}
+
+
+function runGamelose()
+{
+    defeat_sound.play();
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = "black";
+    context.font = "Arial 40px";
+	context.fillText("LOSE", 100, 100);
+
+	context.fillRect(200, 200, 200, 200)
+
+}
+
+
 function runFight ()
 {
-
-	FightInput();
+	var Enemy = npcs[currentEnemy]
+	if(FightInput() == 0)
+		return;
 	
 	context.fillStyle = "#ccc";		
 	context.fillRect(0, 0, canvas.width, canvas.height);
@@ -273,11 +409,11 @@ function runFight ()
 	
 	context.fillStyle = "#000";
 	context.font = "40px Arial";
-	context.fillText("Lv"+Player.Player_level, 1130, 380);
+	context.fillText("Lv"+Player.Player_level, 1130, 375);
 	
 	context.fillStyle = "#000";
 	context.font = "40px Arial";
-	context.fillText("Lv"+Player.Player_level, 480, 120);
+	context.fillText("Lv"+Player.Player_level, 480, 112);
 	
 		
 	context.fillStyle = "#000";
@@ -301,9 +437,48 @@ function runFight ()
 	// what will character do
 	context.fillStyle = "#FFF";
 	context.font = "50px Arial";
-	context.fillText("What will "+Player.Name + " Do!", 80, 635);
+	context.fillText("What will "+Player.Name + " Do?", 80, 635);
 
+	context.fillStyle = "#52635b";
+	context.fillRect (918,378.3,252,24);
 	
+	
+	context.fillStyle = "#ffff00";
+	var staminaWidth = Math.max((Player.stamina / Player.staminaM) * 248, 0);
+	context.fillRect (920,382,staminaWidth,19);
+
+	// enemy stamina background
+	context.fillStyle = "#52635b";w
+	context.fillRect (265.9,116,252,24);
+	// enemy stamina
+	context.fillStyle = "#ffff00";
+	var staminaWidthE = Math.max((npcs[currentEnemy].stamina / npcs[currentEnemy].staminaM) * 248, 0);
+	context.fillRect (267.9,119,staminaWidthE,19)
+
+	context.fillStyle = "#000";
+	context.font = "60px Arial";
+	context.fillText("ATTACKS",860,575,  100, 20);
+
+	context.fillStyle = "#000";
+	context.font = "20 Arial";
+	context.fillText("Press W for Slash", 670, 625, 150, 20);
+
+	context.fillStyle = "#000";
+	context.font = "20 Arial";
+	context.fillText("Press S for Pound", 670, 680, 150, 20);
+
+	context.fillStyle = "#000";
+	context.font = "20 Arial";
+	context.fillText("Press A for Stamina", 1000, 625, 150, 20);
+
+	context.fillStyle = "#000";
+	context.font = "20 Arial";
+	context.fillText("Press D for Health", 1000, 680, 150, 20);
+
+
+
+	npcs[currentEnemy].fightDraw();//THIS
+
 	background_sound.stop();
 }
 	
@@ -318,6 +493,13 @@ function draw() {
 		case STATE_FIGHT:
 			runFight();
 			break;
+		case STATE_GAMEWIN:
+			runGamewin();
+			break;
+		case STATE_GAMELOSE:
+			runGamelose();
+			break;	
+
 	}	
 
 	requestAnimationFrame(draw);

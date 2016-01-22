@@ -20,8 +20,8 @@ pFight.src = "imgs/pFight.png";
 var timer = 0;
 
 var Player = {
-	posX: 115,
-	posY: 45,
+	posX: 107,
+	posY: 41,
 	height: 16,
 	width: 16,
 	health: 7,
@@ -32,6 +32,9 @@ var Player = {
 	facing: "down",		//"down", "left", "right", "up"
 	isturn: true,
 	engageAttack: false,
+	stamina: 5,
+	staminaM: 5,
+
 	draw: function() {
 		if(this.engageAttack == true)
 		{
@@ -45,6 +48,7 @@ var Player = {
 
     		if(timer == 20) {
     			gameState = STATE_FIGHT
+    			timer = 0;
     			fight_background_sound.play();
     			return;
     		}
@@ -71,7 +75,7 @@ var Player = {
 var Move = 
 {
 	slash: Math.round(randomRange(1,2)),
-	pound: Math.round(randomRange(1,2)),
+	pound: Math.round(randomRange(2,4)),
 }
 
 var EnemyMove = 

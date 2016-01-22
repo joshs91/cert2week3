@@ -77,28 +77,40 @@ var boss = {
 	y: 150,
 	width: 60,
 	height: 85,
-	
+	health: 10,
+	healthM: 10,
+	name: "BOSS",
+	alive: true,
+	stamina:5,
+	staminaM:5,
+	gameDraw: function() {
 
+	},
 
-	draw: function(){
+	gameUpdate: function(){
 		var animTime = Math.floor(Math.abs(Math.sin((time/25))*5));
 		
 		var img = bossFrames[animTime];
 		//console.log(deathAnimTime);
-		var alive = true
+		
 
 				if (this.x < Player.posX + Player.width &&
    			this.x + this.width > Player.posX &&
    			this.y < Player.posY + Player.height &&
    			this.height + this.y > Player.posY){
-			alive = false;
+			gameState = STATE_FIGHT
+			fight_background_sound.play();
+			for(var i = 0; i < npcs.length; i++) {
+				if(npcs[i].name == this.name)
+					currentEnemy = i;
+			}
 		}
 
-		if(alive == true){
+		if(this.alive == true){
 		context.drawImage(img, this.x, this.y);
 		deathTime = 0
 		}
-		if(alive == false){
+		if(this.alive == false){
 			
 			deathTime += 1;
 			var deathAnimTime = Math.floor((deathTime/10)%12);
@@ -106,6 +118,13 @@ var boss = {
 			var deathImg = bossDeathFrames[deathAnimTime];
 			context.drawImage(deathImg, this.x, this.y)	
 		}
-	}
+	},
+	fightDraw: function () {
+			context.save();
+				context.translate(980, -20);
+				context.scale(4, 4);
+				context.drawImage(bossFrames[0], 0 ,0);
+			context.restore();
+		},
 
 }
